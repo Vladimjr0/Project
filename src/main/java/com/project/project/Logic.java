@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class Logic {
 
-    private DataBase dataBase;
-    private Scanner scanner;
+    private final DataBase dataBase;
+    private final Scanner scanner;
 
     {
         dataBase = new DataBase();
@@ -14,7 +14,6 @@ public class Logic {
 
 
     public void mainLogic() {
-        Product product = new Product("Ручка", 20, 40);
         System.out.println("Магазин. Доступные действия");
         System.out.println("1. Добавить товар.");
         System.out.println("2. Посмотреть товары.");

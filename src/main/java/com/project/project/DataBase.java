@@ -14,7 +14,7 @@ public class DataBase {
     public void addItem(Product product) {
         String sql = "INSERT INTO products (item_name, item_price, item_quantity) values (?,?,?)";
         try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
             System.out.println("Товар успешно добавлен.");
 
