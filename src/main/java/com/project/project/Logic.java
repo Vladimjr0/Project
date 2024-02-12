@@ -19,26 +19,45 @@ public class Logic {
         System.out.println("1. Добавить товар.");
         System.out.println("2. Посмотреть товары.");
         System.out.println("3. Удалить товар");
-        System.out.println("4. Выйти из приложения");
+        System.out.println("4. Купить товар");
+        System.out.println("5. Выйти из приложения");
         int choice;
         do {
             choice = scanner.nextInt();
             scanner.nextLine();
-            switch (choice){
+            switch (choice) {
                 case 1:
-                    dataBase.addItem(product);
+                    dataBase.addItem(new Product(inputString("название"), inputDouble("цену"), inputInt("количество")));
                     break;
                 case 2:
-
                     System.out.println(dataBase.getAllProducts());
                     break;
                 case 3:
-                    dataBase.removeProduct("Ручка");
+                    dataBase.removeProduct(inputString("название"));
                     break;
                 case 4:
+                    dataBase.buyProduct(inputString("название"), inputInt("количество"));
+                    scanner.nextLine();
+                    break;
+                case 5:
                     System.out.println("Выход из программы");
             }
-        }while (choice !=4);
+        } while (choice != 5);
+    }
+
+    public String inputString(String name){
+        System.out.println("Введите " + name + " товара.");
+        return scanner.nextLine();
+    }
+
+    public int inputInt(String name){
+        System.out.println("Введите " + name + " товара.");
+        return scanner.nextInt();
+    }
+
+    public double inputDouble(String name){
+        System.out.println("Введите " + name + " товара.");
+        return scanner.nextDouble();
     }
 
 }

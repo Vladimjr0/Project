@@ -16,7 +16,7 @@ public class DataBase {
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement preparedStatement = conn.prepareStatement(sql);) {
 
-            System.out.println("Подключено");
+            System.out.println("Товар успешно добавлен.");
 
             preparedStatement.setString(1, product.getItemName());
             preparedStatement.setBigDecimal(2, new BigDecimal(product.getItemPrice()));
@@ -24,7 +24,7 @@ public class DataBase {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println("Ошибка подключения");
+            System.out.println("Ошибка подключения к базе данных.");
             e.printStackTrace();
         }
 
@@ -48,7 +48,7 @@ public class DataBase {
                 products.add(product);
             }
         } catch (SQLException e) {
-            System.out.println("Ошибка при получении данных");
+            System.out.println("Ошибка при получении данных.");
             e.printStackTrace();
         }
         return products;
@@ -62,14 +62,39 @@ public class DataBase {
             preparedStatement.setString(1, itemName);
             int rowDeleted = preparedStatement.executeUpdate();
             if (rowDeleted > 0) {
-                System.out.println("Удалено");
+                System.out.println("Товар удален.");
             } else {
-                System.out.println("Не найдено строк для удаления");
+                System.out.println("Не найдено строк для удаления.");
             }
         } catch (SQLException e) {
-            System.out.println("Ошибка удаления");
+            System.out.println("Ошибка удаления.");
             e.printStackTrace();
         }
+
+    }
+
+
+    public void buyProduct(String name, int quantity) {
+        String updateSql = "UPDATE products SET item_quantity = item_quantity - ? WHERE item_name = ?";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement updateStatement = connection.prepareStatement(updateSql)) {
+
+            updateStatement.setInt(1, quantity);
+            updateStatement.setString(2, name);
+
+            int rowsUpdated = updateStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Товар успешно куплен.");
+            } else {
+                System.out.println("Товар не найден или недостаточно товара на складе.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Ошибка в покупке товара.");
+            e.printStackTrace();
+        }
+
 
     }
 
