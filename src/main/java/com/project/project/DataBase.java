@@ -33,7 +33,7 @@ public class DataBase {
 
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT id, item_name, item_price, item_quantity FROM products";
+        String sql = "SELECT id, item_name, item_price, item_quantity FROM products ORDER BY item_name";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              Statement statement = conn.createStatement();
