@@ -9,9 +9,7 @@ import java.sql.*;
 public class ProjectApplication {
 
     public static void main(String[] args) {
-//		SpringApplication.run(ProjectApplication.class, args);
-        Logic logic = new Logic();
-        logic.mainLogic();
+        SpringApplication.run(ProjectApplication.class, args);
 
     }
 
