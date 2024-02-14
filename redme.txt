@@ -1,8 +1,0 @@
-Установить Postgres
-пользователь postgres
-пароль root
-переходишь в каталог по умолчанию через cmd
-cd "C:\Program Files\PostgreSQL\16\bin"
-далее пишешь такую команду
-psql --dbname=postgresql://postgres:root@localhost:5432/project --file="C:\Users\Имя пользователя\Documents\project_dump.sql"
-Сам файлик с бд закинь сначала в свои документы

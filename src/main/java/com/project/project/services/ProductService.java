@@ -3,9 +3,11 @@ package com.project.project.services;
 import com.project.project.models.Product;
 import com.project.project.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -27,6 +29,10 @@ public class ProductService {
 
         productRepository.save(product);
         return true;
+    }
+
+    public List<Product> getAllProducts(){
+        return productRepository.findAll(Sort.by("itemName"));
     }
 
 

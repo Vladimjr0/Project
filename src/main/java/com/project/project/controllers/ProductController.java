@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class ProductController {
 
@@ -34,6 +36,13 @@ public class ProductController {
             return "redirect:/notSuccess";
         }
     }
+    @GetMapping("/products")
+    public String getAllProducts(Model model){
+        List<Product> products = productService.getAllProducts();
+        model.addAttribute("products", products);
+        return "products";
+    }
+
     @GetMapping("/success")
     public String showSuccess(){
         return "success";
