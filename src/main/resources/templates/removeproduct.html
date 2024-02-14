@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Удалить продукт</title>
+</head>
+<body>
+    <form action="#" th:action="@{/removeproduct}"  method="post">
+        <label for="itemname">Введите название товара, которое хотите удалить:</label>
+        <input type="text" id="itemname"  name="itemName" th:value="*{itemName}"/>
+
+        <input type="submit" value="Удалить"/>
+
+    </form>
+
+
+</body>
+</html>
