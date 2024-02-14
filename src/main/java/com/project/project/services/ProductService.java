@@ -31,8 +31,19 @@ public class ProductService {
         return true;
     }
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return productRepository.findAll(Sort.by("itemName"));
+    }
+
+    public boolean removeProduct(String itemName) {
+        Product existingProduct = productRepository.findByItemName(itemName);
+        if (existingProduct == null) {
+            return false;
+        }
+
+        productRepository.delete(existingProduct);
+        return true;
+
     }
 
 
