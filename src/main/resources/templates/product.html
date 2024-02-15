@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о продукте</title>
+</head>
+<body>
+<h1>Информация о продукте</h1>
+<p>ID: <span th:text="${product.id}"></span></p>
+<p>Название: <span th:text="${product.itemName}"></span></p>
+<p>Цена: <span th:text="${product.itemPrice}"></span></p>
+<p>Количество: <span th:text="${product.itemQuantity}"></span></p>
+<p>Дата создания: <span th:text="${product.createdAt}"></span></p>
+
+
+
+<a th:href = "@{/buy/{id}(id=${product.id})}">Купить товар</a>
+</body>
+</html>

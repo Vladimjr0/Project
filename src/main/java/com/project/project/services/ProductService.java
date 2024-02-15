@@ -46,6 +46,20 @@ public class ProductService {
 
     }
 
+    public Product getProductById(Long id){
+        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Продукт с таким Id не найден"));
+    }
+
+    public boolean buyProduct(Long id, int itemQuantity){
+        Product existingProduct = getProductById(id);
+        if(existingProduct==null||existingProduct.getItemQuantity()-itemQuantity<0){
+            return false;
+        }
+        existingProduct.setItemQuantity(existingProduct.getItemQuantity()-itemQuantity);
+        productRepository.save(existingProduct);
+        return true;
+
+    }
 
 }
 
