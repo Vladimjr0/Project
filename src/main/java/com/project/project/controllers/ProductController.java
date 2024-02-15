@@ -3,10 +3,12 @@ package com.project.project.controllers;
 
 import com.project.project.models.Product;
 import com.project.project.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -27,7 +29,11 @@ public class ProductController {
     }
 
     @PostMapping("/addproduct")
-    public String addNewProduct(@ModelAttribute Product product) {
+    public String addNewProduct(@Valid @ModelAttribute Product product, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return "addproduct";
+        }
+
         if (productService.addProduct(product)) {
             return "redirect:/success";
         } else {
