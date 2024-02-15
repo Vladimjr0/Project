@@ -6,10 +6,7 @@ import com.project.project.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -54,6 +51,28 @@ public class ProductController {
     @PostMapping("/removeproduct")
     public String removeProduct(@RequestParam("itemName") String itemName) {
         if (productService.removeProduct(itemName)) {
+            return "redirect:/success";
+        } else {
+            return "redirect:/notSuccess";
+        }
+    }
+
+    @GetMapping("/product/{id}")
+    public String getProduct(@PathVariable Long id, Model model){
+        Product product = productService.getProductById(id);
+        model.addAttribute("product", product);
+        return "product";
+    }
+
+    @GetMapping("/buy/{id}")
+    public String buyProduct(@PathVariable Long id, Model model){
+        model.addAttribute("itemQuantity", "");
+        return "buy";
+    }
+
+    @PostMapping("/buy/{id}")
+    public String buyProduct(@RequestParam("itemQuantity") int itemQuantity, @PathVariable Long id) {
+        if (productService.buyProduct(id, itemQuantity)) {
             return "redirect:/success";
         } else {
             return "redirect:/notSuccess";

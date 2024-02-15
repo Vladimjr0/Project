@@ -19,7 +19,7 @@
             <tbody>
                 <tr th:each="product: ${products}">
                     <td th:text = "${product.id}"></td>
-                    <td th:text = "${product.itemName}"></td>
+                    <td><a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.itemName}"></a></td>
                     <td th:text = "${product.itemPrice}"></td>
                     <td th:text = "${product.itemQuantity}"></td>
                     <td th:text = "${product.createdAt}"></td>

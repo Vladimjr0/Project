@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Покупка товара</title>
+</head>
+<body>
+<h1>Покупка товара</h1>
+<form th:action="@{/buy/{id}(id=${id})}" method="post">
+    <label for="itemQuantity">Количество:</label>
+    <input type="number" id="itemQuantity" name="itemQuantity">
+    <button type="submit">Купить</button>
+</form>
+</body>
+</html>
