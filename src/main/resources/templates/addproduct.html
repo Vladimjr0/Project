@@ -5,19 +5,28 @@
     <title>Добавить продукт</title>
 </head>
 <body>
-    <form action="#" th:action="@{/addproduct}" th:object = "${product}" method="post">
-        <label for="itemname">Название продукта:</label>
-        <input type="text" id="itemname" th:field="*{itemName}"/>
+<form th:action="@{/addproduct}" th:object="${product}" method="post">
 
-        <label for="itemprice">Цена продукта:</label>
-        <input type="text" id="itemprice" th:field="*{itemPrice}"/>
+    <div th:if="${#fields.hasErrors('itemName')}" th:errors="*{itemName}">Item Name Error</div>
+    <div>
+        <label for="itemName">Название товара:</label>
+        <input type="text" id="itemName" th:field="*{itemName}" />
+    </div>
 
-        <label for="itemquantity">Количество продукта:</label>
-        <input type="text" id="itemquantity" th:field="*{itemQuantity}"/>
+    <div th:if="${#fields.hasErrors('itemPrice')}" th:errors="*{itemPrice}">Item Price Error</div>
+    <div>
+        <label for="itemPrice">Цена товара:</label>
+        <input type="text" id="itemPrice" th:field="*{itemPrice}" />
+    </div>
 
-        <input type="submit" value="Добавить"/>
+    <div th:if="${#fields.hasErrors('itemQuantity')}" th:errors="*{itemQuantity}">Item Quantity Error</div>
+    <div>
+        <label for="itemQuantity">Количество товара:</label>
+        <input type="number" id="itemQuantity" th:field="*{itemQuantity}" />
+    </div>
 
-    </form>
+    <button type="submit">Добавить товар</button>
+</form>
 
 
 </body>
