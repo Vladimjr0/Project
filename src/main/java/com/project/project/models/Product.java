@@ -2,6 +2,7 @@ package com.project.project.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull(message = "Это поле обязательно")
+    @NotBlank(message = "Это поле обязательно")
     private String itemName;
 
     @NotNull(message = "Это поле обязательно")
