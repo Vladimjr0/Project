@@ -8,7 +8,7 @@
 <h1>Покупка товара</h1>
 <form th:action="@{/buy/{id}(id=${id})}" method="post">
     <label for="itemQuantity">Количество:</label>
-    <input type="number" id="itemQuantity" name="itemQuantity">
+    <input type="number" min="1" id="itemQuantity" name="itemQuantity">
     <button type="submit">Купить</button>
 </form>
 </body>

@@ -35,7 +35,7 @@ public class ProductController {
         }
 
         if (productService.addProduct(product)) {
-            return "redirect:/success";
+            return "redirect:/products";
         } else {
             return "redirect:/notSuccess";
         }
@@ -48,20 +48,19 @@ public class ProductController {
         return "products";
     }
 
-    @GetMapping("/removeproduct")
-    public String removeProduct(Model model) {
-        model.addAttribute("itemName", "");
-        return "removeproduct";
+    @GetMapping("/removeproduct/{id}")
+    public String removeProduct(@PathVariable Long id) {
+        productService.removeProduct(id);
+        return "redirect:/products";
     }
-
-    @PostMapping("/removeproduct")
-    public String removeProduct(@RequestParam("itemName") String itemName) {
-        if (productService.removeProduct(itemName)) {
-            return "redirect:/success";
-        } else {
-            return "redirect:/notSuccess";
-        }
-    }
+//    @PostMapping("/removeproduct")
+//    public String removeProduct(@RequestParam("itemName") String itemName) {
+//        if (productService.removeProduct(itemName)) {
+//            return "redirect:/success";
+//        } else {
+//            return "redirect:/notSuccess";
+//        }
+//    }
 
     @GetMapping("/product/{id}")
     public String getProduct(@PathVariable Long id, Model model){
@@ -79,12 +78,24 @@ public class ProductController {
     @PostMapping("/buy/{id}")
     public String buyProduct(@RequestParam("itemQuantity") int itemQuantity, @PathVariable Long id) {
         if (productService.buyProduct(id, itemQuantity)) {
-            return "redirect:/success";
+            return "redirect:/products";
         } else {
             return "redirect:/notSuccess";
         }
     }
-
+    @GetMapping("/edit/{id}")
+    public String editProduct(@PathVariable Long id, Model model){
+        model.addAttribute("product", productService.getProductById(id));
+        return "edit";
+    }
+    @PostMapping("/edit/{id}")
+    public String editProduct(@PathVariable Long id, @Valid @ModelAttribute Product product, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "edit";
+        }
+        productService.editProduct(product);
+        return "redirect:/products";
+    }
 
     @GetMapping("/success")
     public String showSuccess() {

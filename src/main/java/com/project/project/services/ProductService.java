@@ -35,8 +35,8 @@ public class ProductService {
         return productRepository.findAll(Sort.by("itemName"));
     }
 
-    public boolean removeProduct(String itemName) {
-        Product existingProduct = productRepository.findByItemName(itemName);
+    public boolean removeProduct(Long id) {
+        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Продукт с таким Id не найден"));
         if (existingProduct == null) {
             return false;
         }
@@ -59,6 +59,10 @@ public class ProductService {
         productRepository.save(existingProduct);
         return true;
 
+    }
+    public void editProduct(Product product){
+        product.setCreatedAt(LocalDateTime.now());
+        productRepository.save(product);
     }
 
 }
