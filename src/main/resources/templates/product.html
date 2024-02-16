@@ -13,7 +13,8 @@
 <p>Дата создания: <span th:text="${product.createdAt}"></span></p>
 
 
-
-<a th:href = "@{/buy/{id}(id=${product.id})}">Купить товар</a>
+<a th:href = "@{/buy/{id}(id=${product.id})}"><button>Купить товар</button></a>
+<a th:href = "@{/removeproduct/{id}(id=${product.id})}"><button>Удалить товар</button></a>
+<a th:href = "@{/edit/{id}(id=${product.id})}"><button>Редактировать товар</button></a>
 </body>
 </html>
