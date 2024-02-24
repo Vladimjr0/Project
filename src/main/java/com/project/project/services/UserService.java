@@ -1,10 +1,9 @@
 package com.project.project.services;
 
-import com.project.project.exceptions.RegistrationUserDto;
+import com.project.project.dtos.RegistrationUserDto;
 import com.project.project.models.User;
 import com.project.project.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,19 +19,14 @@ import java.util.stream.Collectors;
 @Service
 
 public class UserService implements UserDetailsService {
-    private UserRepository userRepository;
-    private  RoleService roleService;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-    }
-    @Autowired
-    public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
-    }
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 

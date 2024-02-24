@@ -6,6 +6,7 @@ import com.project.project.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -47,13 +48,12 @@ public class SecurityConfig {
 
     }
 
-    private UserService userService;
+
+
     private JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
+
+
     @Autowired
     public void setJwtRequestFilter (JwtRequestFilter jwtRequestFilter){
         this.jwtRequestFilter = jwtRequestFilter;
@@ -69,13 +69,7 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userService);
-        return daoAuthenticationProvider;
-    }
+
 
 
 }
