@@ -1,4 +1,4 @@
-package com.project.project.exceptions;
+package com.project.project.dtos;
 
 import com.project.project.models.Role;
 import jakarta.persistence.JoinColumn;
