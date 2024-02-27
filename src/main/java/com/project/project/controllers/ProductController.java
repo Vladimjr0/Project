@@ -1,10 +1,14 @@
 package com.project.project.controllers;
 
 
+import com.project.project.dtos.ProductAddDto;
+import com.project.project.exceptions.AppError;
 import com.project.project.models.Product;
 import com.project.project.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +16,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
-@Controller
+@RestController
 public class ProductController {
 
     private final ProductService productService;
@@ -22,51 +26,29 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/addproduct")
-    public String showAddProduct(Model model) {
-        model.addAttribute("product", new Product());
-        return "addproduct";
-    }
 
     @PostMapping("/addproduct")
-    public String addNewProduct(@Valid @ModelAttribute Product product, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return "addproduct";
-        }
-
-        if (productService.addProduct(product)) {
-            return "redirect:/products";
-        } else {
-            return "redirect:/notSuccess";
-        }
+    public ResponseEntity<?> addNewProduct(@RequestBody ProductAddDto productAddDto) {
+        return productService.addProduct(productAddDto);
     }
 
     @GetMapping("/products")
-    public String getAllProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
-        model.addAttribute("products", products);
-        return "products";
+    @ResponseBody
+    public List<Product> getAllProducts(){
+        return productService.getAllProducts();
     }
 
     @GetMapping("/removeproduct/{id}")
-    public String removeProduct(@PathVariable Long id) {
+    public ResponseEntity<?> removeProduct(@PathVariable Long id) {
         productService.removeProduct(id);
-        return "redirect:/products";
+        return ResponseEntity.ok("Продукт успешно удален.");
     }
-//    @PostMapping("/removeproduct")
-//    public String removeProduct(@RequestParam("itemName") String itemName) {
-//        if (productService.removeProduct(itemName)) {
-//            return "redirect:/success";
-//        } else {
-//            return "redirect:/notSuccess";
-//        }
-//    }
 
+    // ПЕРЕДЕЛАТЬ ПОД RESPONSEENTITY<>
     @GetMapping("/product/{id}")
-    public String getProduct(@PathVariable Long id, Model model){
-        Product product = productService.getProductById(id);
-        model.addAttribute("product", product);
-        return "product";
+    @ResponseBody
+    public ResponseEntity<?> getProduct(@PathVariable Long id){
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @GetMapping("/buy/{id}")

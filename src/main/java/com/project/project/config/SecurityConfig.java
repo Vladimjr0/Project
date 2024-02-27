@@ -37,7 +37,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers("/secured").authenticated()
                         .requestMatchers("/info").authenticated()
+                        .requestMatchers("/addproduct").hasRole("OWNER")
                         .requestMatchers("/owner").hasRole("OWNER")
+                        .requestMatchers("/removeproduct/{id}").hasRole("OWNER")
                         .anyRequest().permitAll())
                 .sessionManagement(session->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
