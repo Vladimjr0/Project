@@ -59,22 +59,27 @@ public class ProductService {
         return productRepository.findById(id).map(ResponseEntity::ok).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    public boolean buyProduct(Long id, int itemQuantity){
+    public ResponseEntity<?> buyProduct(Long id, int itemQuantity){
 
         return productRepository.findById(id).map(product -> {
             if (product.getItemQuantity()>=itemQuantity){
                 product.setItemQuantity(product.getItemQuantity()-itemQuantity);
                 productRepository.save(product);
-                return true;
+                return ResponseEntity.ok("Покупка успешно совершена");
             }
-            return false;
-        }).orElse(false);
+            return ResponseEntity.badRequest().body("Нет стока товаров");
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
 
-    public void editProduct(Product product){
+    public ResponseEntity<?> editProduct(ProductAddDto productAddDto, Long id){
+        Product product = (Product) getProductById(id).getBody();
+        product.setItemName(productAddDto.getItemName());
+        product.setItemPrice(productAddDto.getItemPrice());
+        product.setItemQuantity(productAddDto.getItemQuantity());
         product.setCreatedAt(LocalDateTime.now());
         productRepository.save(product);
+        return ResponseEntity.ok("Товар успешно обновлен");
     }
 
 }

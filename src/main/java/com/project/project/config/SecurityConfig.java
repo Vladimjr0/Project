@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/addproduct").hasRole("OWNER")
                         .requestMatchers("/owner").hasRole("OWNER")
                         .requestMatchers("/removeproduct/{id}").hasRole("OWNER")
+                        .requestMatchers("/buy/{id}").authenticated()
                         .anyRequest().permitAll())
                 .sessionManagement(session->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
