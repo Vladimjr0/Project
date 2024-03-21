@@ -4,7 +4,6 @@ package com.project.project.controllers;
 import com.project.project.dtos.ProductAddDto;
 import com.project.project.models.Product;
 import com.project.project.services.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }

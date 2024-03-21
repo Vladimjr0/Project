@@ -10,9 +10,7 @@ public class ProductsResponseDto {
 
     private Long id;
     private String itemName;
-
     private Double itemPrice;
-
     private int itemQuantity;
 
 

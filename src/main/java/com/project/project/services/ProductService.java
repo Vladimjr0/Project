@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,10 +26,9 @@ public class ProductService {
     }
 
     public ResponseEntity<?> addProduct(@RequestBody ProductAddDto productAddDto) {
-        if (productRepository.findByItemName(productAddDto.getItemName()) != null) {
+        if (productRepository.existsByItemName(productAddDto.getItemName())) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Продукт с таким именем уже существует"), HttpStatus.BAD_REQUEST);
         }
-
         Product product = new Product();
         return productFieldSet(product, productAddDto);
     }
@@ -37,8 +37,9 @@ public class ProductService {
         return productRepository.findAll(Sort.by("itemName"));
     }
 
-    public ResponseEntity<?> getProductById(Long id) {
-        return productRepository.findById(id).map(ResponseEntity::ok).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(()
+        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
     }
 
     public ResponseEntity<?> removeProductId(Long id) {
@@ -57,7 +58,7 @@ public class ProductService {
                         productRepository.save(product);
                         return ResponseEntity.ok("Покупка успешно совершена");
                     }
-                    return ResponseEntity.badRequest().body("Нет такого количества товара на складе");
+                    return ResponseEntity.badRequest().body("Нет такого количества товара на складе ");
                 }).orElse(new ResponseEntity<>("Продукт с таким id не найден", HttpStatus.NOT_FOUND));
     }
 
