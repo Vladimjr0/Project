@@ -1,15 +1,20 @@
 package com.project.project.services;
 
 import com.project.project.dtos.RegistrationUserDto;
+import com.project.project.dtos.UserDto;
+import com.project.project.dtos.UserUpdateDto;
 import com.project.project.models.User;
 import com.project.project.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,13 +50,33 @@ public class UserService implements UserDetailsService {
                         .collect(Collectors.toList()));
 
     }
-    public User createNewUser(RegistrationUserDto registrationUserDto){
+
+    public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = new User();
         user.setUserName(registrationUserDto.getUserName());
         user.setEmail(registrationUserDto.getEmail());
         user.setUserPassword(passwordEncoder.encode(registrationUserDto.getUserPassword()));
         user.setRoles(List.of(roleService.getUserRole()));
-
         return userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll(Sort.by("id"));
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public UserDto updateUser(UserUpdateDto userUpdateDto, Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
+        user.setUserName(userUpdateDto.getUserName());
+        user.setEmail(userUpdateDto.getEmail());
+        user.setUserPassword(userUpdateDto.getUserPassword());
+        userRepository.save(user);
+
+        return new UserDto(user.getId(), user.getUserName(), user.getEmail());
     }
 }

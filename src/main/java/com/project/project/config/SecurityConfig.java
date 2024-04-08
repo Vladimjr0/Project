@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth-> auth
+                        //TODO прописать роли в контроллерах
                         .requestMatchers("/secured").authenticated()
                         .requestMatchers("/info").authenticated()
                         .requestMatchers("/addproduct").hasRole("OWNER")
@@ -60,8 +61,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-
-
-
 }
