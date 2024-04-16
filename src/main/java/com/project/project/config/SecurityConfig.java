@@ -34,13 +34,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth-> auth
-                        //TODO прописать роли в контроллерах
-                        .requestMatchers("/secured").authenticated()
-                        .requestMatchers("/info").authenticated()
-                        .requestMatchers("/addproduct").hasRole("OWNER")
-                        .requestMatchers("/owner").hasRole("OWNER")
-                        .requestMatchers("/removeproduct/{id}").hasRole("OWNER")
-                        .requestMatchers("/buy/{id}").authenticated()
                         .anyRequest().permitAll())
                 .sessionManagement(session->session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

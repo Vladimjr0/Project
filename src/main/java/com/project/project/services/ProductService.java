@@ -40,9 +40,10 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public Product getProductById(Long id) {
-        return productRepository.findById(id).orElseThrow(()
+    public ProductsResponseDto getProductById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
+        return ApiMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     public void deleteProduct(Long id) {

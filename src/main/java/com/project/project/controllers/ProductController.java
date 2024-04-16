@@ -3,47 +3,52 @@ package com.project.project.controllers;
 
 import com.project.project.dtos.ProductAddDto;
 import com.project.project.dtos.ProductsResponseDto;
-import com.project.project.models.Product;
 import com.project.project.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "Контроллер для взаимодействия с товарами")
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
 
     @Operation(summary = "Метод с помощью которого мы создаем новый товар")
-    @PostMapping("/createProduct")
-    public ResponseEntity<?> addNewProduct(@RequestBody ProductAddDto productAddDto) {
-        return ResponseEntity.ok(productService.createProduct(productAddDto));
+    @PostMapping()
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ProductsResponseDto> addNewProduct(@RequestBody ProductAddDto productAddDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productAddDto));
     }
 
     @Operation(summary = "Метод, позволяющий посмотреть список всех товаров")
-    @GetMapping("/products")
-    public List<ProductsResponseDto> getAllProducts() {
-        return productService.getAllProducts();
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<ProductsResponseDto>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @Operation(summary = "Метод, удаляющий товар по id")
-    @GetMapping("/removeproduct/{id}")
-    public ResponseEntity<?> removeProduct(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> removeProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Метод, позволяющий посмотреть информацию о каком-то конкретном товаре по id")
-    @GetMapping("/product/{id}")
-    public ResponseEntity<?> getProduct(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<ProductsResponseDto> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
@@ -53,8 +58,9 @@ public class ProductController {
 //    }
 
     @Operation(summary = "Метод для обновлении информации о товаре")
-    @PostMapping("/update/{id}")
-    public ResponseEntity<?> editProduct(@PathVariable Long id, @RequestBody ProductAddDto productAddDto) {
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ProductsResponseDto> editProduct(@PathVariable Long id, @RequestBody ProductAddDto productAddDto) {
         return ResponseEntity.ok(productService.updateProduct(productAddDto, id));
     }
 }
