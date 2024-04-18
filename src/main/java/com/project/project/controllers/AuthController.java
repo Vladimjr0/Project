@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Контроллер для авторизации и регистрации")
+@Tag(name = "Контроллер для авторизации")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {

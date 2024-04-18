@@ -3,11 +3,12 @@ package com.project.project.services;
 import com.project.project.dtos.ProductAddDto;
 import com.project.project.dtos.ProductsResponseDto;
 import com.project.project.mapper.ApiMapper;
+import com.project.project.models.Category;
 import com.project.project.models.Product;
+import com.project.project.repositories.CategoryRepository;
 import com.project.project.repositories.ProductRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public ProductsResponseDto createProduct(@RequestBody ProductAddDto productAddDto) {
@@ -79,8 +82,16 @@ public class ProductService {
         product.setItemPrice(productAddDto.getItemPrice());
         product.setItemQuantity(productAddDto.getItemQuantity());
         product.setCreatedAt(LocalDateTime.now());
+        product.setCategories(List.of(
+                categoryRepository.findByName(productAddDto.getCategoryName()).orElseThrow(()
+                        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой категории не существует"))
+        ));
         productRepository.save(product);
-        return new ProductsResponseDto(product.getId(), product.getItemName(), product.getItemPrice(), product.getItemQuantity());
+        return new ProductsResponseDto(product.getId(),
+                product.getItemName(),
+                product.getItemPrice(),
+                product.getItemQuantity(),
+                product.getCategories().stream().map(Category::getName).collect(Collectors.toList()));
     }
 
 }
