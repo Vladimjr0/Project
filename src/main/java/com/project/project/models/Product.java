@@ -4,66 +4,38 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name="products")
+@Data
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Это поле обязательно")
+
     private String itemName;
 
-    @NotNull(message = "Это поле обязательно")
-    @Min(value = 0,message = "Цена должна быть положительной")
     private Double itemPrice;
 
-    @NotNull(message = "Это поле обязательно")
-    @Min(value = 0,message = "Количество должно быть положительным")
     private Integer itemQuantity;
 
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "products_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private Collection<Category> categories;
 
-    public String getItemName() {
-        return itemName;
-    }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public Double getItemPrice() {
-        return itemPrice;
-    }
-
-    public void setItemPrice(Double itemPrice) {
-        this.itemPrice = itemPrice;
-    }
-
-    public Integer getItemQuantity() {
-        return itemQuantity;
-    }
-
-    public void setItemQuantity(Integer itemQuantity) {
-        this.itemQuantity = itemQuantity;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

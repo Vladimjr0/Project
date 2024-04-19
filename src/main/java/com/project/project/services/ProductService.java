@@ -1,70 +1,114 @@
 package com.project.project.services;
 
+import com.project.project.dtos.ProductAddDto;
+import com.project.project.dtos.ProductsResponseDto;
+import com.project.project.mapper.ApiMapper;
+import com.project.project.models.Category;
 import com.project.project.models.Product;
+import com.project.project.repositories.CategoryRepository;
 import com.project.project.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
-    public boolean addProduct(Product product) {
-        Product existingProduct = productRepository.findByItemName(product.getItemName());
-        if (existingProduct != null) {
-            return false;
+    public ProductsResponseDto createProduct(@RequestBody ProductAddDto productAddDto) {
+        if (productRepository.existsByItemName(productAddDto.getItemName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Товар с таким именем уже существует");
         }
-
-        product.setCreatedAt(LocalDateTime.now());
+        Product product = ApiMapper.INSTANCE.productAddDtoToProduct(productAddDto);
+        product.setCategories(List.of(
+                categoryRepository.findByName(productAddDto.getCategoryName()).orElseThrow(()
+                        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Такой категории не существует"))
+        ));
 
         productRepository.save(product);
-        return true;
+
+        return ApiMapper.INSTANCE.productToProductResponseDto(product);
+
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll(Sort.by("itemName"));
+    public List<ProductsResponseDto> getAllProducts() {
+        List<Product> products = productRepository.findAll(Sort.by("itemName"));
+        return products.stream()
+                .map(ApiMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
     }
 
-    public boolean removeProduct(Long id) {
-        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Продукт с таким Id не найден"));
-        if (existingProduct == null) {
-            return false;
+    public ProductsResponseDto getProductById(Long id) {
+        Product product = productRepository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
+        return ApiMapper.INSTANCE.productToProductResponseDto(product);
+    }
+
+    public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден");
         }
+        productRepository.deleteById(id);
+    }
 
-        productRepository.delete(existingProduct);
-        return true;
+    //TODO подумать над тем, что должен возвращать этот метод
+    public void addCategoryToProduct(Long productId, Long categoryId) {
+        Product product = productRepository.findById(productId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория не найдена"));
+        product.getCategories().add(category);
+        productRepository.save(product);
 
     }
 
-    public Product getProductById(Long id){
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Продукт с таким Id не найден"));
-    }
 
-    public boolean buyProduct(Long id, int itemQuantity){
-        Product existingProduct = getProductById(id);
-        if(existingProduct==null||existingProduct.getItemQuantity()-itemQuantity<0){
-            return false;
-        }
-        existingProduct.setItemQuantity(existingProduct.getItemQuantity()-itemQuantity);
-        productRepository.save(existingProduct);
-        return true;
-
-    }
-    public void editProduct(Product product){
-        product.setCreatedAt(LocalDateTime.now());
+    public void removeCategoryFromProduct(Long productId, Long categoryId) {
+        Product product = productRepository.findById(productId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория не найдена"));
+        product.getCategories().remove(category);
         productRepository.save(product);
     }
 
+
+    public List<ProductsResponseDto> sortProductsByCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория не найдена"));
+
+        List<Product> products = productRepository.findByCategoriesContaining(category);
+
+        return products.stream()
+                .map(ApiMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
+
+    }
+
+
+    public ProductsResponseDto updateProduct(ProductAddDto productAddDto, Long id) {
+        Product product = productRepository.findById(id).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
+        ApiMapper.INSTANCE.updateProductFromDto(productAddDto, product);
+
+        productRepository.save(product);
+
+        return ApiMapper.INSTANCE.productToProductResponseDto(product);
+
+    }
 }
+
+
+
 
 

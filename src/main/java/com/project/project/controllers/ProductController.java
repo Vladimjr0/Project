@@ -1,111 +1,84 @@
 package com.project.project.controllers;
 
 
-import com.project.project.models.Product;
+import com.project.project.dtos.ProductAddDto;
+import com.project.project.dtos.ProductsResponseDto;
 import com.project.project.services.ProductService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.BindingResult;
+
 
 import java.util.List;
 
-@Controller
+@Tag(name = "Контроллер для взаимодействия с товарами")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    @Operation(summary = "Метод с помощью которого мы создаем новый товар")
+    @PostMapping()
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ProductsResponseDto> addNewProduct(@RequestBody ProductAddDto productAddDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productAddDto));
     }
 
-    @GetMapping("/addproduct")
-    public String showAddProduct(Model model) {
-        model.addAttribute("product", new Product());
-        return "addproduct";
+    @Operation(summary = "Метод, позволяющий посмотреть список всех товаров")
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<ProductsResponseDto>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @PostMapping("/addproduct")
-    public String addNewProduct(@Valid @ModelAttribute Product product, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return "addproduct";
-        }
-
-        if (productService.addProduct(product)) {
-            return "redirect:/products";
-        } else {
-            return "redirect:/notSuccess";
-        }
+    @Operation(summary = "Метод для сортировки товаров по категориям")
+    @GetMapping("/category/{categoryId}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<ProductsResponseDto>> sortProductByCategory(@PathVariable Long categoryId){
+        return ResponseEntity.ok(productService.sortProductsByCategory(categoryId));
     }
 
-    @GetMapping("/products")
-    public String getAllProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
-        model.addAttribute("products", products);
-        return "products";
+    @Operation(summary = "Метод, удаляющий товар по id")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> removeProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/removeproduct/{id}")
-    public String removeProduct(@PathVariable Long id) {
-        productService.removeProduct(id);
-        return "redirect:/products";
-    }
-//    @PostMapping("/removeproduct")
-//    public String removeProduct(@RequestParam("itemName") String itemName) {
-//        if (productService.removeProduct(itemName)) {
-//            return "redirect:/success";
-//        } else {
-//            return "redirect:/notSuccess";
-//        }
-//    }
-
-    @GetMapping("/product/{id}")
-    public String getProduct(@PathVariable Long id, Model model){
-        Product product = productService.getProductById(id);
-        model.addAttribute("product", product);
-        return "product";
+    @Operation(summary = "Метод, позволяющий посмотреть информацию о каком-то конкретном товаре по id")
+    @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<ProductsResponseDto> getProduct(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
-    @GetMapping("/buy/{id}")
-    public String buyProduct(@PathVariable Long id, Model model){
-        model.addAttribute("itemQuantity", "");
-        return "buy";
+    @Operation(summary = "Метод для обновлении информации о товаре")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<ProductsResponseDto> editProduct(@PathVariable Long id, @RequestBody ProductAddDto productAddDto) {
+        return ResponseEntity.ok(productService.updateProduct(productAddDto, id));
     }
 
-    @PostMapping("/buy/{id}")
-    public String buyProduct(@RequestParam("itemQuantity") int itemQuantity, @PathVariable Long id) {
-        if (productService.buyProduct(id, itemQuantity)) {
-            return "redirect:/products";
-        } else {
-            return "redirect:/notSuccess";
-        }
-    }
-    @GetMapping("/edit/{id}")
-    public String editProduct(@PathVariable Long id, Model model){
-        model.addAttribute("product", productService.getProductById(id));
-        return "edit";
-    }
-    @PostMapping("/edit/{id}")
-    public String editProduct(@PathVariable Long id, @Valid @ModelAttribute Product product, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "edit";
-        }
-        productService.editProduct(product);
-        return "redirect:/products";
+    @Operation(summary = "Метод для добавления категории товару")
+    @PostMapping("/{id}/category/{categoryId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> addCategoryToProduct(@PathVariable Long id, @PathVariable Long categoryId){
+        productService.addCategoryToProduct(id, categoryId);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/success")
-    public String showSuccess() {
-        return "success";
+    @Operation(summary = "Метод для удаления категории из товара")
+    @DeleteMapping("/{id}/category/{categoryId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> removeCategoryToProduct(@PathVariable Long id, @PathVariable Long categoryId){
+        productService.removeCategoryFromProduct(id, categoryId);
+        return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/notSuccess")
-    public String showNotSuccess() {
-        return ("notSuccess");
-    }
-
-
 }
