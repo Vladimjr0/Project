@@ -7,6 +7,7 @@ import com.project.project.mapper.ApiMapper;
 import com.project.project.models.User;
 import com.project.project.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,17 +23,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public Optional<User> findByUserName(String userName) {
         return userRepository.findByUserName(userName);
@@ -57,11 +53,9 @@ public class UserService implements UserDetailsService {
                         .collect(Collectors.toList()));
 
     }
-
+    //TODO прописать условие при котором пользователь не может быть создан
     public User createNewUser(RegistrationUserDto registrationUserDto) {
-        User user = new User();
-        user.setUserName(registrationUserDto.getUserName());
-        user.setEmail(registrationUserDto.getEmail());
+        User user = ApiMapper.INSTANCE.registrationUserDtoToUser(registrationUserDto);
         user.setUserPassword(passwordEncoder.encode(registrationUserDto.getUserPassword()));
         user.setRoles(List.of(roleService.getUserRole()));
         return userRepository.save(user);
@@ -82,11 +76,11 @@ public class UserService implements UserDetailsService {
 
         User user = userRepository.findById(id).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
-        user.setUserName(userUpdateDto.getUserName());
-        user.setEmail(userUpdateDto.getEmail());
-        user.setUserPassword(userUpdateDto.getUserPassword());
+
+        ApiMapper.INSTANCE.updateUserFromDto(userUpdateDto, user);
+
         userRepository.save(user);
 
-        return new UserDto(user.getId(), user.getUserName(), user.getEmail());
+        return ApiMapper.INSTANCE.userToUserDto(user);
     }
 }

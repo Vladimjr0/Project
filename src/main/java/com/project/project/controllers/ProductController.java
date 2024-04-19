@@ -59,11 +59,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
-//    @PostMapping("/buy/{id}")
-//    public ResponseEntity<?> buyProduct(@RequestBody Map<String, Integer> requestBody, @PathVariable Long id) {
-//        return productService.buyProduct(id,  requestBody.get("itemQuantity"));
-//    }
-
     @Operation(summary = "Метод для обновлении информации о товаре")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")

@@ -42,7 +42,7 @@ public class CategoryController {
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
-    //TODO Возможно стоит возвращать не список категорий а Dto, чтобы пользователь не мог видеть id.
+    //TODO Возможно стоит возвращать не список категорий, а Dto, чтобы пользователь не мог видеть id.
     @Operation(summary = "Метод для просмотра всех категорий")
     @PreAuthorize("permitAll()")
     @GetMapping
