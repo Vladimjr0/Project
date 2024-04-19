@@ -4,9 +4,12 @@ import com.project.project.dtos.CategoryRequestDto;
 import com.project.project.models.Category;
 import com.project.project.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,11 @@ public class CategoryService {
 
     public void delete(Long id){
         categoryRepository.deleteById(id);
+    }
+
+
+    public List<Category> getAllCategory(){
+        return categoryRepository.findAll(Sort.by("name"));
     }
 
 }

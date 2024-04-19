@@ -55,6 +55,42 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    //TODO подумать над тем, что должен возвращать этот метод
+    public void addCategoryToProduct(Long productId, Long categoryId) {
+        Product product = productRepository.findById(productId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория не найдена"));
+        product.getCategories().add(category);
+        productRepository.save(product);
+
+    }
+
+
+    public void removeCategoryFromProduct(Long productId, Long categoryId) {
+        Product product = productRepository.findById(productId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Товар не найден"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория не найдена"));
+        product.getCategories().remove(category);
+        productRepository.save(product);
+    }
+
+
+    public List<ProductsResponseDto> sortProductsByCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория не найдена"));
+
+        List<Product> products = productRepository.findByCategoriesContaining(category);
+
+        return products.stream()
+                .map(ApiMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
+
+    }
+
+
 //TODO зачем покупать товар, если должен быть реализован функционал корзины.
 //    public ResponseEntity<?> buyProduct(Long id, int itemQuantity) {
 //        return productRepository.findById(id)

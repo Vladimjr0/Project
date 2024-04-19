@@ -37,6 +37,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
+    @Operation(summary = "Метод для сортировки товаров по категориям")
+    @GetMapping("/category/{categoryId}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<ProductsResponseDto>> sortProductByCategory(@PathVariable Long categoryId){
+        return ResponseEntity.ok(productService.sortProductsByCategory(categoryId));
+    }
+
     @Operation(summary = "Метод, удаляющий товар по id")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
@@ -62,5 +69,21 @@ public class ProductController {
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<ProductsResponseDto> editProduct(@PathVariable Long id, @RequestBody ProductAddDto productAddDto) {
         return ResponseEntity.ok(productService.updateProduct(productAddDto, id));
+    }
+
+    @Operation(summary = "Метод для добавления категории товару")
+    @PostMapping("/{id}/category/{categoryId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> addCategoryToProduct(@PathVariable Long id, @PathVariable Long categoryId){
+        productService.addCategoryToProduct(id, categoryId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Метод для удаления категории из товара")
+    @DeleteMapping("/{id}/category/{categoryId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> removeCategoryToProduct(@PathVariable Long id, @PathVariable Long categoryId){
+        productService.removeCategoryFromProduct(id, categoryId);
+        return ResponseEntity.noContent().build();
     }
 }

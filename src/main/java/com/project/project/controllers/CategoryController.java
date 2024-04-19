@@ -1,6 +1,7 @@
 package com.project.project.controllers;
 
 import com.project.project.dtos.CategoryRequestDto;
+import com.project.project.models.Category;
 import com.project.project.repositories.CategoryRepository;
 import com.project.project.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Контроллер для создания категорий товара")
 @RequestMapping("/category")
@@ -38,5 +41,12 @@ public class CategoryController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    //TODO Возможно стоит возвращать не список категорий а Dto, чтобы пользователь не мог видеть id.
+    @Operation(summary = "Метод для просмотра всех категорий")
+    @PreAuthorize("permitAll()")
+    @GetMapping
+    public ResponseEntity<List<Category>> getAllCategory(){
+        return ResponseEntity.ok(categoryService.getAllCategory());
     }
 }
