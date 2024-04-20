@@ -1,11 +1,9 @@
 package com.project.project.dtos;
 
 
-import com.project.project.models.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Collection;
 import java.util.List;
 
 @Data

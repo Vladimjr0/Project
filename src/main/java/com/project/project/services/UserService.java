@@ -3,10 +3,9 @@ package com.project.project.services;
 import com.project.project.dtos.RegistrationUserDto;
 import com.project.project.dtos.UserDto;
 import com.project.project.dtos.UserUpdateDto;
+import com.project.project.entities.User;
 import com.project.project.mapper.ApiMapper;
-import com.project.project.models.User;
 import com.project.project.repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -29,13 +29,14 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
-
+    @Transactional(readOnly = true)
     public Optional<User> findByUserName(String userName) {
         return userRepository.findByUserName(userName);
     }
 
-    public UserDto getUserById(Long id){
-        User user = userRepository.findById(id).orElseThrow(()->
+    @Transactional(readOnly = true)
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
         return ApiMapper.INSTANCE.userToUserDto(user);
     }
@@ -53,6 +54,8 @@ public class UserService implements UserDetailsService {
                         .collect(Collectors.toList()));
 
     }
+
+    @Transactional
     //TODO прописать условие при котором пользователь не может быть создан
     public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = ApiMapper.INSTANCE.registrationUserDtoToUser(registrationUserDto);
@@ -61,6 +64,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll(Sort.by("id"));
         return users.stream()
@@ -68,10 +72,12 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     public UserDto updateUser(UserUpdateDto userUpdateDto, Long id) {
 
         User user = userRepository.findById(id).orElseThrow(()

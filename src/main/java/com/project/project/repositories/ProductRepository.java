@@ -1,7 +1,7 @@
 package com.project.project.repositories;
 
-import com.project.project.models.Category;
-import com.project.project.models.Product;
+import com.project.project.entities.Category;
+import com.project.project.entities.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,7 @@
 package com.project.project.controllers;
 
 import com.project.project.dtos.CategoryRequestDto;
-import com.project.project.models.Category;
-import com.project.project.repositories.CategoryRepository;
+import com.project.project.entities.Category;
 import com.project.project.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +26,7 @@ public class CategoryController {
     public ResponseEntity<CategoryRequestDto> create(@RequestBody CategoryRequestDto categoryRequestDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.create(categoryRequestDto));
     }
-
+    //TODO лучше внести id в DTO
     @Operation(summary = "Метод для изменения категории")
     @PreAuthorize("hasRole('OWNER')")
     @PutMapping("/{id}")

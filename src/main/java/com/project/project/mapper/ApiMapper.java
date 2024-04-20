@@ -1,16 +1,15 @@
 package com.project.project.mapper;
 
 import com.project.project.dtos.*;
-import com.project.project.models.Category;
-import com.project.project.models.Product;
-import com.project.project.models.User;
+import com.project.project.entities.Category;
+import com.project.project.entities.Product;
+import com.project.project.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,7 @@ public interface ApiMapper {
     ProductsResponseDto productToProductResponseDto(Product product);
 
     @Named("categoriesToNames")
-    default List<String> categoriesToNames(Collection<Category> categories){
+    default List<String> categoriesToNames(List<Category> categories){
         return categories.stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());
