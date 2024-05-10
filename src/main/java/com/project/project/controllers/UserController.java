@@ -33,7 +33,7 @@ public class UserController {
 
     @Operation(summary = "Метод для просмотра информации об одном пользователе по ID")
     @GetMapping("/{id}")
-    @PreAuthorize("authenticated")
+    @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id){
         return ResponseEntity.ok(userService.getUserById(id));
     }

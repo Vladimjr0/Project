@@ -8,11 +8,11 @@ import com.project.project.mapper.ApiMapper;
 import com.project.project.repositories.CategoryRepository;
 import com.project.project.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public ProductsResponseDto createProduct(@RequestBody ProductAddDto productAddDto) {
+    public ProductsResponseDto createProduct(ProductAddDto productAddDto) {
         if (productRepository.existsByItemName(productAddDto.getItemName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Товар с таким именем уже существует");
         }
@@ -43,11 +43,12 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductsResponseDto> getAllProducts() {
-        List<Product> products = productRepository.findAll(Sort.by("itemName"));
-        return products.stream()
-                .map(ApiMapper.INSTANCE::productToProductResponseDto)
-                .collect(Collectors.toList());
+    public Page<ProductsResponseDto> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable).map(ApiMapper.INSTANCE::productToProductResponseDto);
+//        List<Product> products = productRepository.findAll(Sort.by("itemName"));
+//        return products.stream()
+//                .map(ApiMapper.INSTANCE::productToProductResponseDto)
+//                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

@@ -7,11 +7,12 @@ import com.project.project.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 
@@ -33,8 +34,8 @@ public class ProductController {
     @Operation(summary = "Метод, позволяющий посмотреть список всех товаров")
     @GetMapping()
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<ProductsResponseDto>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<Page<ProductsResponseDto>> getAllProducts(Pageable pageable) {
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
     @Operation(summary = "Метод для сортировки товаров по категориям")

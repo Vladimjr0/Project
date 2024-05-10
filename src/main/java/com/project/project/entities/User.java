@@ -3,7 +3,7 @@ package com.project.project.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Collection;
+import java.util.List;
 
 
 @Entity
@@ -32,7 +32,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
 
-    private Collection<Role> roles;
+    private List<Role> roles;
 
 
 }
