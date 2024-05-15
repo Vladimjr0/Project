@@ -29,7 +29,7 @@ public class AuthService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new AuthenticationException("Отказано в доступе");
+            throw new AuthenticationException("Неправильный логин или пароль.");
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
@@ -38,13 +38,12 @@ public class AuthService {
 
     @Transactional
     public UserDto createNewUser(RegistrationUserDto registrationUserDto) {
-        if (!registrationUserDto.getUserPassword().equals(registrationUserDto.getConfirmUserPassword())) {
+        if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
             throw new PasswordMismatchException("Пароли не совпадают");
         }
-        if (userService.findByUserName(registrationUserDto.getUserName()).isPresent()) {
-            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
+        if(userService.findUserByEmail(registrationUserDto.getEmail()).isPresent()){
+            throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
         }
-
         User user = userService.createNewUser(registrationUserDto);
         return ApiMapper.INSTANCE.userToUserDto(user);
     }
