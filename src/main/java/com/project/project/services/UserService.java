@@ -34,10 +34,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUserName(userName);
     }
 
-    public Optional<User> findUserByEmail(String email){
-        return userRepository.findByEmail(email);
-    }
-
     @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
@@ -45,7 +41,6 @@ public class UserService implements UserDetailsService {
         return ApiMapper.INSTANCE.userToUserDto(user);
     }
 
-    //TODO переписать UserDetail на кастом для того, чтобы можно было зашить id пользователя в токен. (id, email, username)
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
@@ -61,9 +56,10 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    //TODO прописать условие при котором пользователь не может быть создан
     public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = ApiMapper.INSTANCE.registrationUserDtoToUser(registrationUserDto);
-        user.setUserPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
+        user.setUserPassword(passwordEncoder.encode(registrationUserDto.getUserPassword()));
         user.setRoles(List.of(roleService.getUserRole()));
         return userRepository.save(user);
     }
