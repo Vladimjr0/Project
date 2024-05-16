@@ -6,7 +6,10 @@ import com.project.project.dtos.UserUpdateDto;
 import com.project.project.services.AuthService;
 import com.project.project.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,10 @@ public class UserController {
     private final AuthService authService;
 
     @Operation(summary = "Метод для просмотра списка всех пользователей")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список всех пользователей"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещен")
+    })
     @GetMapping
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -49,14 +56,14 @@ public class UserController {
     @Operation(summary = "Метод для обновления информации о пользователе")
     @PutMapping("/{id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id){
+    public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id){
         return ResponseEntity.ok(userService.updateUser(userUpdateDto, id));
     }
 
     @Operation(summary = "Метод для регистрации нового пользователя")
     @PostMapping("/register")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<UserDto> createNewUser(@RequestBody RegistrationUserDto registrationUserDto) {
+    public ResponseEntity<UserDto> createNewUser(@Valid @RequestBody RegistrationUserDto registrationUserDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.createNewUser(registrationUserDto)) ;
     }
 

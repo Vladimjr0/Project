@@ -6,6 +6,7 @@ import com.project.project.dtos.ProductsResponseDto;
 import com.project.project.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class ProductController {
     @Operation(summary = "Метод с помощью которого мы создаем новый товар")
     @PostMapping()
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<ProductsResponseDto> addNewProduct(@RequestBody ProductAddDto productAddDto) {
+    public ResponseEntity<ProductsResponseDto> addNewProduct(@Valid @RequestBody ProductAddDto productAddDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productAddDto));
     }
 
