@@ -34,6 +34,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUserName(userName);
     }
 
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
     @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
@@ -59,7 +63,7 @@ public class UserService implements UserDetailsService {
     //TODO прописать условие при котором пользователь не может быть создан
     public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = ApiMapper.INSTANCE.registrationUserDtoToUser(registrationUserDto);
-        user.setUserPassword(passwordEncoder.encode(registrationUserDto.getUserPassword()));
+        user.setUserPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
         user.setRoles(List.of(roleService.getUserRole()));
         return userRepository.save(user);
     }

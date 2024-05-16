@@ -38,11 +38,11 @@ public class AuthService {
 
     @Transactional
     public UserDto createNewUser(RegistrationUserDto registrationUserDto) {
-        if (!registrationUserDto.getUserPassword().equals(registrationUserDto.getConfirmUserPassword())) {
+        if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
             throw new PasswordMismatchException("Пароли не совпадают");
         }
-        if (userService.findByUserName(registrationUserDto.getUserName()).isPresent()) {
-            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
+        if (userService.findByEmail(registrationUserDto.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("Пользователь с такой почтой уже существует");
         }
 
         User user = userService.createNewUser(registrationUserDto);

@@ -37,6 +37,7 @@ public interface ApiMapper {
     void updateProductFromDto(ProductAddDto productAddDto, @MappingTarget Product product);
 
 
+    @Mapping(source = "username", target = "userName")
     @Mapping(target = "userPassword", ignore = true)
     @Mapping(target = "roles", ignore = true)
     User registrationUserDtoToUser(RegistrationUserDto registrationUserDto);
